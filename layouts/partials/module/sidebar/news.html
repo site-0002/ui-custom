@@ -1,0 +1,31 @@
+{{ $x := (.context | default "") }}
+{{ $posts := (where $x.Site.RegularPages "Type" "in" $x.Site.Params.sections.blog) }}
+{{ $news := (where $posts ".Params.categories" "intersect" (slice "News")) }}
+{{ $news = ($news | first 15) }}
+
+{{ with $news }}
+<article>
+  <h2>{{ i18n "news" }}</h2>
+  <div class="border-start ps-3">
+    {{ range .GroupByDate "2006/01/02" }}
+    <h3 class="h5 mb-0">{{ .Key }}</h3>
+    <ul class="list-group list-group-flush">
+      {{ range .Pages }}
+      {{ if (in .Params.categories "News") }}
+      <li class="list-group-item px-0">
+        <div class="article-body">
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </div>
+        <div class="small text-muted text-end fst-italic">
+          <time datetime='{{ .Date.UTC.Format "2006-01-02T15:04:05Z07:00" }}' data-ext-fn="ext-time-local">
+            {{ .Date.UTC.Format "15:04:05 MST" }}
+          </time>
+        </div>
+      </li>
+      {{ end }}
+      {{ end }}
+    </ul>
+    {{ end }}
+  </div>
+</article>
+{{ end }}

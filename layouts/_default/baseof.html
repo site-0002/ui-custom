@@ -1,0 +1,53 @@
+<!doctype html>
+
+{{ $lang := ($.Site.LanguageCode | default "en-us") }}
+
+<html class="h-100" dir="ltr" lang="{{ $lang }}" prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# profile: http://ogp.me/ns/profile# fb: http://ogp.me/ns/fb#">
+<head>{{ partial "head" . }}</head>
+
+{{ $type := (.Type | default "") }}
+{{ $home := "" }}{{ $node := "" }}{{ $page := "" }}
+{{ if .IsHome }}{{ $home = "is-home" }}{{ end }}
+{{ if .IsNode }}{{ $node = "is-node" }}{{ end }}
+{{ if .IsPage }}{{ $page = "is-page" }}{{ end }}
+
+<body class="d-flex flex-column h-100 {{ $home }} {{ $node }} {{ $page }} type-{{ $type }}">
+<header>{{ partial "header" . }}</header>
+{{ if (and (.IsHome) ($.Site.Taxonomies.categories.news)) }}
+<div class="container">
+  <div class="row g-3 flex-shrink-0">
+    <main class="col">
+      <div class="wrap-main">{{ block "main" . }}{{ end }}</div>
+    </main>
+    <aside class="col-lg-3">
+      <div class="wrap-sidebar">{{ partial "sidebar" . }}</div>
+    </aside>
+  </div>
+</div>
+{{ else if (.IsHome) }}
+<div class="container">
+  <main class="flex-shrink-0">
+    <div class="wrap-main">{{ block "main" . }}{{ end }}</div>
+  </main>
+</div>
+{{ else }}
+<main class="flex-shrink-0">
+  <div class="wrap-main">{{ block "main" . }}{{ end }}</div>
+</main>
+{{ end }}
+<footer class="mt-auto">{{ partial "footer" . }}</footer>
+
+<!-- scripts -->
+{{ range $.Site.Data.theme.scripts }}
+<link rel="preload" as="script" href="{{ . }}" crossorigin="anonymous"/>
+<script src="{{ . }}" crossorigin="anonymous" defer></script>
+{{ end }}
+
+{{ $js := "js/theme.min.js" }}
+{{ $script := ((((resources.Get $js | js.Build) | resources.ExecuteAsTemplate $js .) | minify) | fingerprint) }}
+<script type="module" src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+<!-- / scripts -->
+
+{{ partial "module/eggs" (dict "context" . "image" "https://i.imgur.com/P5EE7DI.jpg") }}
+</body>
+</html>
