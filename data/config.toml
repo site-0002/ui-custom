@@ -1,0 +1,5 @@
+[sidebar]
+  [sidebar.main]
+    on = 1
+  [sidebar.news]
+    count = 15
