@@ -4,8 +4,3 @@
 
 [sidebar.main]
 on = 1
-
-[sidebar.news]
-count = '10'
-cover_size = '100'
-truncate = '100'
